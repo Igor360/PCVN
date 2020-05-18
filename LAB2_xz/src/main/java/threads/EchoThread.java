@@ -56,7 +56,7 @@ public class EchoThread extends Thread {
             OutputStream output = socket.getOutputStream();
             writer = new PrintWriter(output, true);
         } catch (IOException e) {
-            return;
+            e.printStackTrace();
         }
 
         String serverMessage = "New user connected: " + this.uuid;
@@ -68,7 +68,7 @@ public class EchoThread extends Thread {
                 line = brinp.readLine();
                 serverMessage = "[" + this.uuid + "]: " + line;
                 server.broadcast(serverMessage, this);
-            } while ((line == null) || line.equalsIgnoreCase("bye"));
+            } while (!line.equalsIgnoreCase("bye"));
             socket.close();
             server.disconnected(this);
             serverMessage = this.uuid + " has quitted.";
@@ -79,6 +79,6 @@ public class EchoThread extends Thread {
     }
 
     public void write(String message) {
-        writer.write(message);
+        writer.println(message);
     }
 }

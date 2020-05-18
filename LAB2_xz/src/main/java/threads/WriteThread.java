@@ -25,11 +25,12 @@ public class WriteThread extends Thread {
 
     public void run() {
         try {
-            BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
+            String userName = readLine("\nEnter your name: ");
+            writer.println(userName);
 
             String text;
             do {
-                text = console.readLine();
+                text = readLine("[" + userName + "]: ");
                 writer.println(text);
 
             } while (!text.equals("bye"));
@@ -38,5 +39,15 @@ public class WriteThread extends Thread {
 
             System.out.println("Error writing to server: " + ex.getMessage());
         }
+    }
+
+    private String readLine(String format, Object... args) throws IOException {
+        if (System.console() != null) {
+            return System.console().readLine(format, args);
+        }
+        System.out.print(String.format(format, args));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(
+                System.in));
+        return reader.readLine();
     }
 }

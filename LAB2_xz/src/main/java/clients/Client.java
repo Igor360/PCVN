@@ -23,7 +23,7 @@ public class Client {
             System.out.println("Connected to the chat server");
 
             new ReadThread(socket, this).start();
-//            new WriteThread(socket, this).start();
+            new WriteThread(socket, this).start();
 
         } catch (UnknownHostException ex) {
             System.out.println("Server not found: " + ex.getMessage());

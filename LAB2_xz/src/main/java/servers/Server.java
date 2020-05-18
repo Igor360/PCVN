@@ -6,13 +6,15 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Server {
 
     protected int PORT;
 
-    static List<EchoThread> clients;
+    protected Set<EchoThread> clients = new HashSet<>();
 
     public Server(int PORT) {
         this.PORT = PORT;
@@ -20,8 +22,7 @@ public class Server {
 
     public void run() {
         ServerSocket serverSocket = null;
-//        Socket socket = null;
-        clients = new ArrayList<>();
+        Socket socket = null;
         try {
             serverSocket = new ServerSocket(PORT);
         } catch (IOException e) {
@@ -29,11 +30,11 @@ public class Server {
         }
         while (true) {
             try {
-                Socket socket = serverSocket.accept();
+                socket = serverSocket.accept();
                 System.out.println("New user connected");
                 EchoThread thread = new EchoThread(socket, this);
-                clients.add(thread);
-                thread.run();
+                this.clients.add(thread);
+                thread.start();
             } catch (IOException e) {
                 System.out.println("I/O error: " + e);
             }
@@ -41,7 +42,7 @@ public class Server {
     }
 
     public void broadcast(String message, EchoThread excludeUser) {
-        for (EchoThread client : clients) {
+        for (EchoThread client : this.clients) {
             if (client != excludeUser) {
                 client.write(message);
             }
